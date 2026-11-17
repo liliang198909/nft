@@ -14,7 +14,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
     string constant META_DATA="ipfs://ipQmR6gyniAZQXdGvb8ZmTsdCsZzFsXaz3pnsSVe5TkKh7G5";
 
     constructor(string memory tokenName, string memory takenSymbol)
-        ERC721("tokenName", "takenSymbol")
+        ERC721(tokenName, takenSymbol)
         Ownable(msg.sender)
     {}
 

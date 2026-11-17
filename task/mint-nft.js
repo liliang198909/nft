@@ -1,13 +1,21 @@
-const { task } = require("hardhat/config")
+const { task } = require("hardhat/config");
+
 task("mint-nft").setAction(async (taskArgs, hre) => {
-    const{firstAccount} = await getNamedAccounts()
-    const nft = await ethers.getContractAt("MyToken", firstAccount)
-    console.log("minting NFT to firstAccount")
-    await nft.safeMint(firstAccount)
-    const mintTx=await nft.safeMint(firstAccount)
-    await mintTx.wait(6)
-    console.log("NFT minted to firstAccount")
-})
-module.exports={
-    mintNFT:task("mint-nft")
-}
+    const { ethers, deployments } = hre;
+    const { deployer } = await hre.getNamedAccounts();
+    const signer = await ethers.getSigner(deployer);
+
+    // 从 deployments 拿地址（第二个参数必须是地址，不是账户名）
+    const nftDeploy = await deployments.get("MyToken");
+    const nft = await ethers.getContractAt("MyToken", nftDeploy.address);
+
+    console.log(`Minting NFT to ${signer.address}...`);
+    const tx = await nft.safeMint(signer.address);
+    await tx.wait(6);
+    console.log(`NFT minted! Tx: ${tx.hash}`);
+
+    const totalSupply = await nft.totalSupply();
+    console.log(`Total supply now: ${totalSupply}`);
+});
+
+module.exports = {};
